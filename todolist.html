@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily TO DO LIST</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Nunito', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #f0f2f5;
+}
+
+h1 {
+  text-align: center;
+  font-size: 30px;
+  color: #2d3436;
+  margin-bottom: 5px;
+}
+
+.header-bar {
+  display: flex;
+  justify-content: flex-start;
+  max-width: 1200px;
+  margin: 0 auto 15px auto;
+}
+
+.arrow-btn {
+  font-size: 18px;
+  cursor: pointer;
+  background: #0984e3;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 12px;
+  transition: 0.2s;
+}
+.arrow-btn:hover {
+  background: #74b9ff;
+}
+
+.date-header {
+  text-align: center;
+  font-size: 18px;
+  color: #636e72;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.left {
+  flex: 1.6;
+  border-radius: 15px;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.left:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.12); }
+
+.right {
+  flex: 1.3;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border-radius: 15px;
+  padding: 20px;
+  box-sizing: border-box;
+  background: white;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.section {
+  margin-bottom: 15px;
+  border-radius: 12px;
+  padding: 12px 15px;
+  background: #f7f8fc;
+  transition: 0.25s;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.02);
+}
+
+.section h3 {
+  margin-top: 0;
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #0984e3;
+  font-weight: 600;
+}
+
+.section.day-review { background: #ffe6e6; }
+
+.task-item, .entry {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: grab;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  transition: 0.2s;
+}
+
+.task-item:hover, .entry:hover { background: #eaf0ff; }
+
+.task-text::before { content: "• "; }
+.task-text { cursor: pointer; }
+
+.memo-input {
+  font-size: 13px;
+  color: #636e72;
+  margin-top: 4px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 4px;
+  width: 95%;
+  box-sizing: border-box;
+  outline: none;
+  display: none;
+}
+
+.task-item.show-memo .memo-input { display: block; }
+
+.add-task-input, .priority-input, .entry-input, .note-input {
+  width: 100%;
+  padding: 7px 8px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  outline: none;
+  font-size: 14px;
+}
+
+.add-task-input:focus, .priority-input:focus, .entry-input:focus, .note-input:focus, .memo-input:focus {
+  border-color: #0984e3;
+  box-shadow: 0 0 6px rgba(9,132,227,0.25);
+}
+
+.save-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 25px;
+  border: none;
+  background: #6c5ce7;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.save-btn:hover { background: #341f97; }
+
+/* NOTE 칸 중앙 정렬 */
+.note-section {
+  max-width: 1200px;
+  margin: 20px auto;
+  border-radius: 12px;
+  padding: 15px;
+  background: #f5f6fa;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+}
+
+.note-section h3 { color: #6c5ce7; font-weight: 600; font-size: 18px; }
+.note-input { font-size: 14px; padding: 6px; }
+
+/* Delete 버튼 */
+.delete-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #d63031;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.task-item:hover .delete-btn,
+.entry:hover .delete-btn { display: inline; }
+
+.task-item.done .task-text, .entry.done .entry-text {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+</style>
+</head>
+<body>
+
+<div class="header-bar">
+  <button class="arrow-btn" onclick="goBack()">← Calendar</button>
+</div>
+
+<h1>Daily TO DO LIST</h1>
+<div class="date-header" id="dateHeader"></div>
+
+<div class="container">
+  <div class="left">
+    <div class="section">
+      <h3>TO DO LIST</h3>
+      <div id="taskContainer"></div>
+      <input type="text" placeholder="Add task & press Enter" id="taskInput" class="add-task-input">
+    </div>
+    <div class="section">
+      <h3>Priority</h3>
+      <div id="priorityContainer"></div>
+      <input type="text" placeholder="Add priority & press Enter" id="priorityInput" class="priority-input">
+    </div>
+  </div>
+  <div class="right">
+    <div class="section">
+      <h3>Morning Paper</h3>
+      <div id="morningContainer"></div>
+      <input type="text" placeholder="Add morning note & press Enter" id="morningInput" class="entry-input">
+    </div>
+    <div class="section">
+      <h3>Routine</h3>
+      <div id="routineContainer"></div>
+      <input type="text" placeholder="Add routine & press Enter" id="routineInput" class="entry-input">
+    </div>
+    <div class="section">
+      <h3>Things to be Thankful For</h3>
+      <div id="thankfulContainer"></div>
+      <input type="text" placeholder="Add thankful thing & press Enter" id="thankfulInput" class="entry-input">
+    </div>
+    <div class="section day-review">
+      <h3>Day Review</h3>
+      <div id="reviewContainer"></div>
+      <input type="text" placeholder="Add review & press Enter" id="reviewInput" class="entry-input">
+    </div>
+  </div>
+</div>
+
+<div class="note-section">
+  <h3>NOTE</h3>
+  <div id="noteContainer"></div>
+  <input type="text" placeholder="Add note & press Enter" id="noteInput" class="note-input">
+</div>
+
+<button class="save-btn" onclick="saveAll()">Save as JSON</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+<script>
+// JS 코드 기존 그대로
+const taskInput = document.getElementById("taskInput");
+const taskContainer = document.getElementById("taskContainer");
+const priorityInput = document.getElementById("priorityInput");
+const priorityContainer = document.getElementById("priorityContainer");
+const morningInput = document.getElementById("morningInput");
+const morningContainer = document.getElementById("morningContainer");
+const routineInput = document.getElementById("routineInput");
+const routineContainer = document.getElementById("routineContainer");
+const thankfulInput = document.getElementById("thankfulInput");
+const thankfulContainer = document.getElementById("thankfulContainer");
+const reviewInput = document.getElementById("reviewInput");
+const reviewContainer = document.getElementById("reviewContainer");
+const noteInput = document.getElementById("noteInput");
+const noteContainer = document.getElementById("noteContainer");
+
+const urlParams = new URLSearchParams(window.location.search);
+const dateKey = urlParams.get('date') || new Date().toISOString().split('T')[0];
+
+let tasks = JSON.parse(localStorage.getItem(dateKey + "-tasks") || "[]");
+let priorityArr = JSON.parse(localStorage.getItem(dateKey + "-priorityArr") || "[]");
+let morningArr = JSON.parse(localStorage.getItem(dateKey + "-morningArr") || "[]");
+let routineArr = JSON.parse(localStorage.getItem(dateKey + "-routineArr") || "[]");
+let thankfulArr = JSON.parse(localStorage.getItem(dateKey + "-thankfulArr") || "[]");
+let reviewArr = JSON.parse(localStorage.getItem(dateKey + "-reviewArr") || "[]");
+let noteArr = JSON.parse(localStorage.getItem(dateKey + "-noteArr") || "[]");
+
+document.getElementById("dateHeader").innerText = new Date(dateKey).toDateString();
+
+function goBack(){ window.location.href="todolistt.html"; }
+
+function renderTasks(){
+  taskContainer.innerHTML="";
+  tasks.forEach((t,i)=>{
+    const div=document.createElement("div");
+    div.className="task-item" + (t.done?" done":"");
+    if(t.showMemo) div.classList.add("show-memo");
+    
+    const span=document.createElement("span");
+    span.className="task-text";
+    span.innerText=t.text;
+    div.appendChild(span);
+
+    const memoInput=document.createElement("input");
+    memoInput.type="text";
+    memoInput.placeholder="↳ Add memo...";
+    memoInput.className="memo-input";
+    memoInput.value=t.memo||"";
+    memoInput.addEventListener("input",(e)=>{ t.memo=e.target.value; });
+    div.appendChild(memoInput);
+
+    span.addEventListener("click",(e)=>{
+      t.showMemo=!t.showMemo;
+      renderTasks();
+      e.stopPropagation();
+    });
+
+    div.addEventListener("dblclick", ()=>{
+      t.done=!t.done;
+      renderTasks();
+    });
+
+    const delBtn=document.createElement("button");
+    delBtn.className="delete-btn";
+    delBtn.innerText="×";
+    delBtn.onclick=(e)=>{ e.stopPropagation(); tasks.splice(i,1); renderTasks(); };
+    div.appendChild(delBtn);
+
+    taskContainer.appendChild(div);
+  });
+}
+
+function addEntry(arr, container, input){
+  const value=input.value.trim();
+  if(!value) return;
+  arr.push({text:value, done:false});
+  input.value="";
+  renderEntry(arr, container);
+}
+function renderEntry(arr, container){
+  container.innerHTML="";
+  arr.forEach((e,i)=>{
+    const div=document.createElement("div");
+    div.className="entry" + (e.done?" done":"");
+    const span=document.createElement("span");
+    span.className="entry-text";
+    span.innerText=e.text;
+    div.appendChild(span);
+    
+    div.addEventListener("dblclick", ()=>{
+      e.done=!e.done;
+      renderEntry(arr,container);
+    });
+    
+    const delBtn=document.createElement("button");
+    delBtn.className="delete-btn";
+    delBtn.innerText="×";
+    delBtn.onclick=(ev)=>{ ev.stopPropagation(); arr.splice(i,1); renderEntry(arr,container); };
+    div.appendChild(delBtn);
+    
+    container.appendChild(div);
+  });
+}
+
+// Enter events
+taskInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ tasks.push({text:taskInput.value, memo:"", showMemo:false}); taskInput.value=""; renderTasks(); } });
+priorityInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ addEntry(priorityArr,priorityContainer,priorityInput); } });
+morningInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ addEntry(morningArr,morningContainer,morningInput); } });
+routineInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ addEntry(routineArr,routineContainer,routineInput); } });
+thankfulInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ addEntry(thankfulArr,thankfulContainer,thankfulInput); } });
+reviewInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ addEntry(reviewArr,reviewContainer,reviewInput); } });
+noteInput.addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ addEntry(noteArr,noteContainer,noteInput); } });
+
+// Save all
+function saveAll(){
+  localStorage.setItem(dateKey + "-tasks",JSON.stringify(tasks));
+  localStorage.setItem(dateKey + "-priorityArr",JSON.stringify(priorityArr));
+  localStorage.setItem(dateKey + "-morningArr",JSON.stringify(morningArr));
+  localStorage.setItem(dateKey + "-routineArr",JSON.stringify(routineArr));
+  localStorage.setItem(dateKey + "-thankfulArr",JSON.stringify(thankfulArr));
+  localStorage.setItem(dateKey + "-reviewArr",JSON.stringify(reviewArr));
+  localStorage.setItem(dateKey + "-noteArr",JSON.stringify(noteArr));
+
+  const data={date: dateKey,tasks, priorityArr, morningArr, routineArr, thankfulArr, reviewArr, noteArr};
+  const blob=new Blob([JSON.stringify(data, null, 2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`todolist-${dateKey}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+renderTasks();
+renderEntry(priorityArr,priorityContainer);
+renderEntry(morningArr,morningContainer);
+renderEntry(routineArr,routineContainer);
+renderEntry(thankfulArr,thankfulContainer);
+renderEntry(reviewArr,reviewContainer);
+renderEntry(noteArr,noteContainer);
+</script>
+
+</body>
+</html>
