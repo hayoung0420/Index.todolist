@@ -1,258 +1,393 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>가계부</title>
+<title>2026 Planner</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
-:root {
-  --bg: #f7f2e9;
-  --card: #fff8f0;
-  --text: #3b2f2f;
-  --sub: #6b5e4f;
-  --muted: #d9cfc2;
-  --brand: #f4d7b2;
-  --brand-dark: #c39f7a;
-  --danger: #ef4444;
-  --ok: #16a34a;
-  --radius: 12px;
-  --hover: #f1ebe0;
-  --fx-bg: #f4d7b2;   /* 외화 가을톤 */
-  --krw-bg: #c39f7a;  /* 원화 가을톤 */
+body {
+  margin: 0;
+  font-family: 'Nunito', sans-serif;
+  padding-bottom: 120px;
+  transition: background 0.5s;
 }
-* { box-sizing: border-box; }
-body { margin:0; font-family:'Segoe UI', Roboto, 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); }
 
-.container { max-width:1200px; margin:24px auto; padding:0 16px; position: relative; }
+header {
+  position: relative;
+  text-align: center;
+  padding: 20px 30px 40px 30px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  transition: background 0.5s;
+}
 
-/* 합계 카드 */
-#summaryCard { position:absolute; top:16px; right:16px; display:flex; gap:12px; flex-wrap:wrap; z-index: 10; }
-#summaryCard .box { border-radius: var(--radius); padding: 12px 16px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.05); font-size:16px; }
-#summaryCard .fx { background: var(--fx-bg); border:2px solid var(--brand-dark); }
-#summaryCard .krw { background: var(--krw-bg); border:2px solid var(--brand-dark); }
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  margin: 0;
+  color: white;
+  opacity: 0.8;
+}
 
-/* 카드 */
-.card { background: var(--card); border-radius: var(--radius); box-shadow:0 6px 18px rgba(0,0,0,0.08); margin-bottom: 80px; overflow:hidden; }
-.card-header { padding:24px; background: var(--brand); color: var(--text); border-bottom:2px solid var(--brand-dark); }
-.title { margin:0; font-size:26px; font-weight:900; }
-.subtitle { margin:6px 0 0; font-size:14px; color: var(--sub); }
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  letter-spacing: 2px;
+  margin: 4px 0 0 0;
+  color: white;
+}
 
-/* 폼 */
-.form { display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:12px; padding:20px; background:#f8f5f0; }
-.form input, .form select { padding:10px; border:1px solid var(--muted); border-radius: var(--radius); font-size:14px; }
-.form input:focus, .form select:focus { outline:none; border-color: var(--brand-dark); box-shadow:0 0 5px rgba(195,159,122,0.3); }
-.form button { grid-column:1 / -1; padding:12px; background: var(--brand); color: var(--text); border:none; border-radius: var(--radius); cursor:pointer; font-weight:bold; font-size:16px; transition:0.2s; }
-.form button:hover { background: var(--brand-dark); color:#fff; }
+.button-left, .button-right {
+  position: absolute;
+  top: 25px;
+}
 
-/* 아코디언 */
-.accordion-item { border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; box-shadow:0 2px 6px rgba(0,0,0,0.06); background: var(--card); }
-.accordion-header { background: var(--hover); padding: 14px 18px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition:0.2s; }
-.accordion-header:hover { background: #e8dfd0; }
-.accordion-header span.total { font-weight: normal; color: var(--sub); font-size: 13px; }
-.accordion-header span.trip { font-weight: normal; font-size: 12px; color: var(--sub); margin-left: 10px; }
-.accordion-content { display: none; padding: 10px 18px 18px; }
-.accordion-content table { width:100%; border-collapse: collapse; }
-.accordion-content th, .accordion-content td { padding:8px 10px; border-bottom:1px solid var(--muted); font-size:14px; text-align:center; }
-.accordion-content th { background:#f1ece4; font-size:12px; color: var(--sub); }
+.button-left {
+  left: 30px;
+}
 
-/* 칩 */
-.chip { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; font-weight:600; }
-.chip-exp { background:#fee2e2; color: var(--danger); }
-.chip-inc { background:#dcfce7; color: var(--ok); }
+.button-right {
+  right: 30px;
+}
 
-/* 버튼 */
-.del-btn, .edit-btn { border:none; background:transparent; cursor:pointer; font-size:12px; margin-left:4px; }
-.del-btn { color: var(--danger); }
-.edit-btn { color: var(--brand-dark); }
-.save-btn { padding:8px 14px; border-radius:10px; background: var(--brand); color: var(--text); border:none; cursor:pointer; font-weight:bold; font-size:14px; transition:0.2s; }
-.save-btn:hover { background: var(--brand-dark); color:#fff; }
+button {
+  background: #ffeaa7;
+  color: #6c5ce7;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: 0.3s;
+}
 
-/* 카테고리 요약 */
-#categorySummary { margin-top:24px; border-radius: var(--radius); background: var(--card); padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-#categorySummary table { width:100%; border-collapse:collapse; }
-#categorySummary th, #categorySummary td { padding:8px 10px; border-bottom:1px solid var(--muted); text-align:center; font-size:14px; }
-#categorySummary th { background:#f1ece4; font-size:12px; color: var(--sub); }
+button:hover {
+  background: #fdcb6e;
+}
 
-.month-filter { margin-bottom:16px; text-align:center; }
-.month-filter button { margin:0 4px; padding:6px 12px; border-radius:8px; border:1px solid var(--muted); background: var(--brand); cursor:pointer; transition:0.2s; }
-.month-filter button:hover { background: var(--brand-dark); color:#fff; }
-.month-filter button.active { background: var(--brand-dark); color:#fff; }
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  max-width: 1100px;
+  margin: 30px auto 60px auto;
+}
+
+.day {
+  font-weight: 700;
+  text-align: center;
+  padding: 10px 0;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  transition: background 0.5s, box-shadow 0.5s;
+}
+
+.date {
+  background: white;
+  border-radius: 16px;
+  padding: 8px;
+  min-height: 130px;
+  position: relative;
+  transition: transform 0.2s, background 0.5s, box-shadow 0.5s;
+}
+
+.date:hover {
+  transform: translateY(-3px);
+}
+
+.date-number {
+  font-weight: 700;
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  background: #f0f0f5;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.date-number:hover {
+  background: #dfe6ff;
+  box-shadow: 0 0 12px rgba(108,92,231,0.4);
+}
+
+.highlight {
+  background: #ffeaa7 !important;
+}
+
+.range-highlight {
+  background: #74b9ff80;
+  border-radius: 16px;
+  position: relative;
+  transition: 0.3s;
+}
+
+.range-remove-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 10px;
+  background: #ff7675;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  display: none;
+}
+
+.range-highlight:hover .range-remove-btn {
+  display: block;
+}
+
+.task-list {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.task {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  border-left: 3px solid #6c5ce7;
+  padding-left: 6px;
+  margin-bottom: 2px;
+  border-radius: 4px;
+  background: #f8f9fa;
+  transition: 0.2s;
+}
+
+.task:hover {
+  background: #f1f3ff;
+}
+
+.task.done {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.delete-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #d63031;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.task:hover .delete-btn {
+  display: inline;
+}
+
+.task-input {
+  display: none;
+  margin-top: 6px;
+}
+
+.date:hover .task-input {
+  display: block;
+}
+
+.task-input input {
+  width: calc(100% - 8px);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.task-input input:focus {
+  border-color: #6c5ce7;
+  box-shadow: 0 0 5px rgba(108,92,231,0.4);
+}
 </style>
 </head>
-<body>
-<div class="container">
-  <div class="card">
-    <div class="card-header">
-      <h1 class="title">가계부</h1>
-      <p class="subtitle">내 지출/입금 기록 관리</p>
-    </div>
-    <form class="form" id="form">
-      <input type="text" id="date" placeholder="날짜 YYYY-MM-DD or 여행" required>
-      <input type="text" id="category" placeholder="항목" required>
-      <input type="text" id="desc" placeholder="내용">
-      <input type="number" step="any" id="fx" placeholder="외화">
-      <input type="number" step="any" id="krw" placeholder="KRW">
-      <select id="type">
-        <option value="지출">지출</option>
-        <option value="입금">입금</option>
-      </select>
-      <input type="text" id="trip" placeholder="여행 국가 (선택)">
-      <input type="text" id="note" placeholder="비고">
-      <button type="submit">추가/수정</button>
-    </form>
-  </div>
 
-  <div class="month-filter" id="monthFilter"></div>
-  <div id="summaryCard"></div>
-  <div id="accordion"></div>
-  <div id="categorySummary"></div>
-</div>
+<body>
+
+<header id="header">
+  <div class="button-left">
+    <button onclick="prevMonth()">◀</button>
+  </div>
+  <h2>2026</h2>
+  <h1 id="monthTitle"></h1>
+  <div class="button-right">
+    <button onclick="saveTasks()">Save</button>
+    <button onclick="nextMonth()">▶</button>
+  </div>
+</header>
+
+<div id="calendar"></div>
 
 <script>
-const STORAGE_KEY="my_ledger";
-let rows=JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]");
-rows.forEach(r=>{ if(!r.fxRaw) r.fxRaw=r.fx??0; if(!r.krwRaw) r.krwRaw=r.krw??0; if(!r.trip) r.trip=""; });
+const year = 2026;
+let currentMonth = 0;
+const monthNames = [
+  "JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE",
+  "JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"
+];
+const days = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+const calendar = document.getElementById("calendar");
+const headerEl = document.getElementById("header");
+const monthTitleEl = document.getElementById("monthTitle");
 
-const form=document.getElementById("form");
-const accordion=document.getElementById("accordion");
-const summaryCard=document.getElementById("summaryCard");
-const categorySummary=document.getElementById("categorySummary");
-const monthFilter=document.getElementById("monthFilter");
-let editIndex=-1; 
-let currentMonthFilter="all";
+const monthThemes = [
+  {body:"#e0e7ff", header:"#6c5ce7", day:"#dfe6e9", cardShadow:"0 4px 8px rgba(108,92,231,0.1)"},
+  {body:"#ffe0e0", header:"#d63031", day:"#ffd6d6", cardShadow:"0 4px 8px rgba(214,0,0,0.1)"},
+  {body:"#e0ffe0", header:"#00b894", day:"#d6ffd6", cardShadow:"0 4px 8px rgba(0,184,148,0.1)"},
+  {body:"#fff0e0", header:"#fd9644", day:"#ffe6d6", cardShadow:"0 4px 8px rgba(253,150,68,0.1)"},
+  {body:"#e0fff5", header:"#00cec9", day:"#d6fff8", cardShadow:"0 4px 8px rgba(0,206,201,0.1)"},
+  {body:"#f0e0ff", header:"#6c5ce7", day:"#e6d6ff", cardShadow:"0 4px 8px rgba(108,92,231,0.1)"},
+  {body:"#fff0f0", header:"#ff7675", day:"#ffd6d6", cardShadow:"0 4px 8px rgba(255,118,117,0.1)"},
+  {body:"#e0f7ff", header:"#0984e3", day:"#d6f0ff", cardShadow:"0 4px 8px rgba(9,132,227,0.1)"},
+  {body:"#fff8e0", header:"#fdcb6e", day:"#fff2d6", cardShadow:"0 4px 8px rgba(253,203,110,0.1)"},
+  {body:"#f0ffe0", header:"#00b894", day:"#e6ffd6", cardShadow:"0 4px 8px rgba(0,184,148,0.1)"},
+  {body:"#ffe0ff", header:"#d63031", day:"#ffd6f0", cardShadow:"0 4px 8px rgba(214,0,0,0.1)"},
+  {body:"#e0e0ff", header:"#6c5ce7", day:"#d6d6ff", cardShadow:"0 4px 8px rgba(108,92,231,0.1)"}
+];
 
-form.addEventListener("submit",(e)=>{
-  e.preventDefault();
-  const fxVal=document.getElementById("fx").value;
-  const krwVal=document.getElementById("krw").value;
-  const row={
-    date:document.getElementById("date").value,
-    category:document.getElementById("category").value,
-    desc:document.getElementById("desc").value,
-    fx:parseFloat(fxVal)||0,
-    krw:parseInt(krwVal)||0,
-    fxRaw:fxVal,
-    krwRaw:krwVal,
-    type:document.getElementById("type").value,
-    trip:document.getElementById("trip").value,
-    note:document.getElementById("note").value,
-  };
-  if(editIndex>=0){ rows[editIndex]=row; editIndex=-1; } else{ rows.push(row); }
-  renderAll();
-  form.reset();
-});
-
-function saveData(){ localStorage.setItem(STORAGE_KEY,JSON.stringify(rows)); downloadJSON(); alert("저장이 완료되었습니다."); }
-function downloadJSON(){ const blob=new Blob([JSON.stringify(rows,null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`ledger_backup_${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href); }
-setInterval(()=>{ localStorage.setItem(STORAGE_KEY,JSON.stringify(rows)); },5*60*1000);
-
-function groupByMonth(data){
-  const map={};
-  data.forEach(r=>{
-    let month=r.date.includes("-")?r.date.slice(0,7):"trip";
-    if(!map[month]) map[month]=[];
-    map[month].push(r);
-  });
-  return map;
+// 오늘 날짜 기준 초기화
+const today = new Date();
+if(today.getFullYear() === 2026){
+  currentMonth = today.getMonth();
 }
 
-function renderMonthFilter(){
-  const months=Object.keys(groupByMonth(rows)).filter(m=>m!=="trip").sort();
-  let html=`<button class="${currentMonthFilter==='all'?'active':''}" onclick="filterMonth('all')">전체</button>`;
-  months.forEach(m=>{
-    html+=`<button class="${currentMonthFilter===m?'active':''}" onclick="filterMonth('${m}')">${m}</button>`;
-  });
-  monthFilter.innerHTML=html;
+function applyTheme() {
+  const theme = monthThemes[currentMonth];
+  document.body.style.background = theme.body;
+  headerEl.style.background = theme.header;
+  monthTitleEl.style.color = "#fff";
+  document.querySelectorAll(".day").forEach(d => d.style.background = theme.day);
+  document.querySelectorAll(".date").forEach(c => c.style.boxShadow = theme.cardShadow);
 }
 
-function filterMonth(month){ currentMonthFilter=month; renderAll(); }
+function renderCalendar() {
+  applyTheme();
+  calendar.innerHTML = "";
+  monthTitleEl.innerText = monthNames[currentMonth];
 
-function renderSummary(){
-  let fxExp=0,fxInc=0,krwExp=0,krwInc=0;
-  rows.forEach(r=>{ 
-    if(currentMonthFilter!=="all" && !r.date.startsWith(currentMonthFilter)) return;
-    if(r.type==="입금"){ fxInc+=r.fx; krwInc+=r.krw; } 
-    else{ fxExp+=r.fx; krwExp+=r.krw; } 
+  const grid = document.createElement("div");
+  grid.className = "calendar-grid";
+
+  days.forEach(d => {
+    const el = document.createElement("div");
+    el.className = "day";
+    el.innerText = d;
+    grid.appendChild(el);
   });
 
-  function formatFX(val){ return Number.isInteger(val)?val:val; } // 소수점은 입력대로
-  function formatKRW(val){ return val.toLocaleString(); }
+  const firstDay = new Date(year, currentMonth, 1).getDay();
+  const totalDays = new Date(year, currentMonth + 1, 0).getDate();
 
-  summaryCard.innerHTML=`
-  <div class="box fx">${formatFX(fxInc-fxExp)} FX</div>
-  <button class="save-btn" onclick="saveData()">저장</button>
-  <div class="box krw">${formatKRW(krwInc-krwExp)} 원</div>`;
-}
+  for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement("div"));
 
-function groupByCategory(data){ const map={}; data.forEach(r=>{ if(currentMonthFilter!=="all" && !r.date.startsWith(currentMonthFilter)) return; if(!map[r.category]) map[r.category]=[]; map[r.category].push(r); }); return map; }
+  for (let d = 1; d <= totalDays; d++) {
+    const key = `${year}-${currentMonth+1}-${d}`;
+    const tasks = JSON.parse(localStorage.getItem(key) || "[]");
 
-function renderCategorySummary(){
-  const grouped=groupByCategory(rows);
-  let html=`<table><thead><tr><th>항목</th><th>총 외화</th><th>총 KRW</th><th>합계</th></tr></thead><tbody>`;
-  Object.keys(grouped).forEach(cat=>{
-    const items=grouped[cat];
-    const totalFX=items.reduce((a,b)=>a+(b.type==="입금"?b.fx:-b.fx),0);
-    const totalKRW=items.reduce((a,b)=>a+(b.type==="입금"?b.krw:-b.krw),0);
-    html+=`<tr><td>${cat}</td><td>${totalFX}</td><td>${totalKRW.toLocaleString()}</td><td>${totalKRW.toLocaleString()} 원</td></tr>`;
-  });
-  html+="</tbody></table>";
-  categorySummary.innerHTML=html;
-}
+    const cell = document.createElement("div");
+    cell.className = "date";
 
-function renderAccordion(){
-  accordion.innerHTML="";
-  const filteredRows=currentMonthFilter==="all"?rows:rows.filter(r=>r.date.startsWith(currentMonthFilter));
-  const grouped={};
-  filteredRows.forEach(r=>{ if(!grouped[r.date]) grouped[r.date]=[]; grouped[r.date].push(r); });
-  Object.keys(grouped).sort().forEach(date=>{
-    const items=grouped[date];
-    const totalKRW=items.reduce((a,b)=>a+(b.type==="입금"?b.krw:-b.krw),0);
-    const header=document.createElement("div");
-    header.className="accordion-header";
-    const trips=items.map(r=>r.trip).filter(t=>t).join(", ");
-    header.innerHTML=`<span>${date}</span>${trips?'<span class="trip">'+trips+'</span>':''}<span class="total">총액: ${totalKRW.toLocaleString()} 원</span><span>+</span>`;
-    const content=document.createElement("div");
-    content.className="accordion-content";
-    let html=`<table><thead><tr><th>항목</th><th>내용</th><th>외화</th><th>KRW</th><th>구분</th><th>여행</th><th>비고</th><th></th></tr></thead><tbody>`;
-    items.forEach(r=>{
-      html+=`<tr>
-        <td>${r.category}</td>
-        <td>${r.desc}</td>
-        <td>${r.fxRaw}</td>
-        <td>${r.krwRaw}</td>
-        <td>${r.type==="입금"?'<span class="chip chip-inc">입금</span>':'<span class="chip chip-exp">지출</span>'}</td>
-        <td>${r.trip}</td>
-        <td>${r.note}</td>
-        <td><button class="edit-btn" onclick="editRow(${rows.indexOf(r)})">수정</button><button class="del-btn" onclick="deleteRow(${rows.indexOf(r)})">삭제</button></td>
-      </tr>`;
+    const num = document.createElement("div");
+    num.className = "date-number";
+    if (tasks.length) num.classList.add("highlight");
+    num.innerText = d;
+
+    num.onclick = (e) => {
+      const url = `todolist.html?date=${encodeURIComponent(key)}`;
+      window.open(url, "_blank");
+    }
+
+    const list = document.createElement("div");
+    list.className = "task-list";
+
+    tasks.forEach((t, i) => {
+      const item = document.createElement("div");
+      item.className = "task" + (t.done ? " done" : "");
+      item.innerText = "• " + t.text;
+
+      item.onclick = () => {
+        t.done = !t.done;
+        localStorage.setItem(key, JSON.stringify(tasks));
+        renderCalendar();
+      }
+
+      const delTaskBtn = document.createElement("button");
+      delTaskBtn.className = "delete-btn";
+      delTaskBtn.innerText = "×";
+      delTaskBtn.onclick = e => {
+        e.stopPropagation();
+        tasks.splice(i, 1);
+        localStorage.setItem(key, JSON.stringify(tasks));
+        renderCalendar();
+      }
+
+      item.appendChild(delTaskBtn);
+      list.appendChild(item);
     });
-    html+="</tbody></table>";
-    content.innerHTML=html;
-    const item=document.createElement("div");
-    item.className="accordion-item";
-    item.appendChild(header);
-    item.appendChild(content);
-    accordion.appendChild(item);
-    header.addEventListener("click",()=>{ content.style.display=content.style.display==="none"||content.style.display===""?"block":"none"; });
-  });
+
+    const inputWrap = document.createElement("div");
+    inputWrap.className = "task-input";
+
+    const inputNew = document.createElement("input");
+    inputNew.placeholder = "Type task & press Enter";
+
+    inputNew.onkeydown = e => {
+      if (e.key === "Enter" && inputNew.value.trim()) {
+        tasks.push({ text: inputNew.value, done:false });
+        localStorage.setItem(key, JSON.stringify(tasks));
+        inputNew.value = "";
+        renderCalendar();
+      }
+    };
+
+    inputWrap.appendChild(inputNew);
+    cell.appendChild(num);
+    cell.appendChild(list);
+    cell.appendChild(inputWrap);
+    grid.appendChild(cell);
+  }
+
+  calendar.appendChild(grid);
 }
 
-function deleteRow(idx){ if(!confirm("삭제하시겠습니까?")) return; rows.splice(idx,1); renderAll(); }
-function editRow(idx){
-  const r=rows[idx];
-  document.getElementById("date").value=r.date;
-  document.getElementById("category").value=r.category;
-  document.getElementById("desc").value=r.desc; 
-  document.getElementById("fx").value=r.fxRaw;
-  document.getElementById("krw").value=r.krwRaw;
-  document.getElementById("type").value=r.type;
-  document.getElementById("trip").value=r.trip;
-  document.getElementById("note").value=r.note;
-  editIndex=idx;
+function saveTasks() {
+  const data = {};
+  for(let d=1; d<=31; d++){
+    const key = `${year}-${currentMonth+1}-${d}`;
+    const tasks = localStorage.getItem(key);
+    if(tasks) data[key] = JSON.parse(tasks);
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `planner-${monthNames[currentMonth]}.json`;
+  a.click();
 }
 
-function renderAll(){ renderMonthFilter(); renderSummary(); renderAccordion(); renderCategorySummary(); }
-renderAll();
+function prevMonth() {
+  if(currentMonth > 0) currentMonth--;
+  renderCalendar();
+}
+
+function nextMonth() {
+  if(currentMonth < 11) currentMonth++;
+  renderCalendar();
+}
+
+renderCalendar();
 </script>
+
 </body>
 </html>
